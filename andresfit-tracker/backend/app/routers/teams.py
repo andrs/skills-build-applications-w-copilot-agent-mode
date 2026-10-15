@@ -1,47 +1,39 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, status
 
-from app.database import get_db
-from app.models import Team, User
-from app.schemas import TeamCreate, TeamRead
+from app.dependencies import get_team_service
+from app.schemas.team import TeamCreate, TeamRead
+from app.services.team_service import TeamService
 
 router = APIRouter(prefix="/api/teams", tags=["teams"])
 
 
-@router.get("/", response_model=list[TeamRead])
-def list_teams(db: Session = Depends(get_db)):
-    return db.query(Team).all()
+@router.get("/", response_model=list[TeamRead], summary="List all teams")
+def list_teams(service: TeamService = Depends(get_team_service)) -> list[TeamRead]:
+    return service.list_teams()
 
 
-@router.get("/{team_id}", response_model=TeamRead)
-def get_team(team_id: int, db: Session = Depends(get_db)):
-    team = db.query(Team).filter(Team.id == team_id).first()
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return team
+@router.get("/{team_id}", response_model=TeamRead, summary="Get team by ID")
+def get_team(team_id: int, service: TeamService = Depends(get_team_service)) -> TeamRead:
+    return service.get_team(team_id)
 
 
-@router.post("/", response_model=TeamRead, status_code=201)
-def create_team(payload: TeamCreate, db: Session = Depends(get_db)):
-    if db.query(Team).filter(Team.name == payload.name).first():
-        raise HTTPException(status_code=400, detail="Team name already exists")
-    members = []
-    for uid in payload.member_ids:
-        user = db.query(User).filter(User.id == uid).first()
-        if not user:
-            raise HTTPException(status_code=404, detail=f"User {uid} not found")
-        members.append(user)
-    team = Team(name=payload.name, description=payload.description, members=members)
-    db.add(team)
-    db.commit()
-    db.refresh(team)
-    return team
+@router.post(
+    "/",
+    response_model=TeamRead,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create a new team",
+)
+def create_team(
+    payload: TeamCreate,
+    service: TeamService = Depends(get_team_service),
+) -> TeamRead:
+    return service.create_team(payload)
 
 
-@router.delete("/{team_id}", status_code=204)
-def delete_team(team_id: int, db: Session = Depends(get_db)):
-    team = db.query(Team).filter(Team.id == team_id).first()
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found")
-    db.delete(team)
-    db.commit()
+@router.delete(
+    "/{team_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a team",
+)
+def delete_team(team_id: int, service: TeamService = Depends(get_team_service)) -> None:
+    service.delete_team(team_id)
