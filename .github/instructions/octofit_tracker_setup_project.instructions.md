@@ -1,13 +1,13 @@
 ---
 applyTo: "**"
 ---
-# Octofit Tracker Multi-tier Application Setup Guidelines
+# AndresFit Tracker Multi-tier Application Setup Guidelines
 
 ## Application goals
 
-Build an Octofit Tracker **multi-tier application** with:
+Build an AndresFit Tracker **multi-tier application** with:
 
-- User authentication and profiles
+- User profiles
 - Activity logging and tracking
 - Team creation and management
 - Competitive leaderboard
@@ -20,20 +20,34 @@ Build an Octofit Tracker **multi-tier application** with:
 
 ## Forwarded ports
 
-- 8000: public (logic/API tier)
-- 5173: public (presentation tier)
-- 27017: private (data tier)
+- 8000: public (logic/API tier — FastAPI)
+- 5173: public (presentation tier — React/Vite)
 
 Do not propose any other ports to forward or make public.
 
 ## Project structure
 
 ```text
-octofit-tracker/
+andresfit-tracker/
 ├── backend/
-│   ├── src/
-│   ├── package.json
-│   └── tsconfig.json
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── routers/
+│   │   │   ├── __init__.py
+│   │   │   ├── users.py
+│   │   │   ├── activities.py
+│   │   │   ├── teams.py
+│   │   │   ├── leaderboard.py
+│   │   │   └── workouts.py
+│   │   └── seed.py
+│   ├── tests/
+│   │   ├── __init__.py
+│   │   └── test_api.py
+│   └── requirements.txt
 └── frontend/
     ├── src/
     └── package.json
@@ -49,18 +63,12 @@ octofit-tracker/
 
 ### Logic tier
 
-- Node.js (LTS)
-- Express
-- TypeScript
+- Python 3.11+
+- FastAPI
+- Uvicorn (ASGI server)
+- Pydantic for request/response validation
 
 ### Data tier
 
-- MongoDB (`mongodb-org`)
-- Mongoose for data access
-
-## MongoDB service expectations
-
-- Always use `ps aux | grep mongod` to check whether mongod is running.
-- `mongodb-org` is the official MongoDB package.
-- `mongosh` is the official client tool.
-- Use Mongoose models from the logic tier for schema/data work instead of ad-hoc raw scripts.
+- SQLite (file-based, zero configuration)
+- SQLAlchemy ORM for data access

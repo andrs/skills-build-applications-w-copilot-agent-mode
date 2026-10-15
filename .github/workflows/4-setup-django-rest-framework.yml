@@ -61,7 +61,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/src/server.ts
+          text-file: andresfit-tracker/backend/src/server.ts
           keyphrase: 'CODESPACE_NAME'
           minimum-occurrences: 1
           case-sensitive: false
@@ -71,7 +71,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/src/server.ts
+          text-file: andresfit-tracker/backend/src/server.ts
           keyphrase: '-8000.app.github.dev'
           minimum-occurrences: 1
           case-sensitive: false

@@ -5,7 +5,7 @@
 
 In this step, you will initialize a modern **multi-tier application** foundation:
 
-- Create `octofit-tracker/frontend` and `octofit-tracker/backend`.
+- Create `andresfit-tracker/frontend` and `andresfit-tracker/backend`.
 - Initialize React 19 (presentation tier) with Vite.
 - Initialize a Node.js + Express + TypeScript backend (logic tier).
 - Add MongoDB support with Mongoose (data tier).
@@ -18,7 +18,7 @@ In this step, you will initialize a modern **multi-tier application** foundation
 > Let's initialize the OctoFit Tracker modern multi-tier application.
 >
 > Follow the instructions exactly and execute step-by-step:
-> - Create octofit-tracker/frontend and octofit-tracker/backend
+> - Create andresfit-tracker/frontend and andresfit-tracker/backend
 > - Initialize React 19 in the frontend with Vite
 > - Initialize backend package.json for Node.js + Express + TypeScript
 > - Add mongoose for MongoDB data access
@@ -34,7 +34,7 @@ In this step, you will initialize a modern **multi-tier application** foundation
 
 Check these files exist and include expected dependencies:
 
-- `octofit-tracker/frontend/package.json` with React 19.
-- `octofit-tracker/backend/package.json` with `express` and `mongoose`.
+- `andresfit-tracker/frontend/package.json` with React 19.
+- `andresfit-tracker/backend/package.json` with `express` and `mongoose`.
 
 </details>

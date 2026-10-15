@@ -1,9 +1,9 @@
 ---
-applyTo: "octofit-tracker/backend/**"
+applyTo: "andresfit-tracker/backend/**"
 ---
-# Octofit Tracker Logic + Data Tier Guidelines
+# AndresFit Tracker Logic + Data Tier Guidelines
 
-## Logic tier (Node.js + Express + TypeScript)
+## Logic tier (Python + FastAPI)
 
 - Build API routes under `/api/`.
 - Keep API service on port `8000`.
@@ -11,15 +11,19 @@ applyTo: "octofit-tracker/backend/**"
 
 Example base URL logic:
 
-```ts
-const codespaceName = process.env.CODESPACE_NAME;
-const baseUrl = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : 'http://localhost:8000';
+```python
+import os
+
+codespace_name = os.environ.get("CODESPACE_NAME")
+if codespace_name:
+    base_url = f"https://{codespace_name}-8000.app.github.dev"
+else:
+    base_url = "http://localhost:8000"
 ```
 
-## Data tier (MongoDB + Mongoose)
+## Data tier (SQLite + SQLAlchemy)
 
-- Use Mongoose models for users, teams, activities, leaderboard, and workouts.
-- Connect to `octofit_db`.
+- Use SQLAlchemy models for users, teams, activities, leaderboard, and workouts.
+- Connect to `andresfit.db` (SQLite file).
 - Validate endpoints with `curl` after wiring routes.
+- Use Pydantic schemas for request/response validation.

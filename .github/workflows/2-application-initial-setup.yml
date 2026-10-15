@@ -1,4 +1,4 @@
-name: Step 2 # octofit-tracker application initial setup
+name: Step 2 # andresfit-tracker application initial setup
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/frontend/package.json
+          text-file: andresfit-tracker/frontend/package.json
           keyphrase: '"react"\s*:\s*"(?:\^)?19(?:\.\d+){0,2}"'
           minimum-occurrences: 1
           case-sensitive: false
@@ -71,7 +71,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/package.json
+          text-file: andresfit-tracker/backend/package.json
           keyphrase: '"express"'
           minimum-occurrences: 1
           case-sensitive: false
@@ -81,7 +81,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/package.json
+          text-file: andresfit-tracker/backend/package.json
           keyphrase: '"mongoose"'
           minimum-occurrences: 1
           case-sensitive: false

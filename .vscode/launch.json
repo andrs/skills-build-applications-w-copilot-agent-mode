@@ -5,22 +5,22 @@
       "name": "Launch Django Backend",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/octofit-tracker/backend/manage.py",
+      "program": "${workspaceFolder}/andresfit-tracker/backend/manage.py",
       "args": ["runserver", "0.0.0.0:8000"],
       "django": true,
       "justMyCode": true,
-      "python": "${workspaceFolder}/octofit-tracker/backend/venv/bin/python",
+      "python": "${workspaceFolder}/andresfit-tracker/backend/venv/bin/python",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/octofit-tracker/backend/venv/bin/python",
-        "VIRTUAL_ENV": "${workspaceFolder}/octofit-tracker/backend/venv",
-        "PATH": "${workspaceFolder}/octofit-tracker/backend/venv/bin:${env:PATH}"
+        "PYTHONPATH": "${workspaceFolder}/andresfit-tracker/backend/venv/bin/python",
+        "VIRTUAL_ENV": "${workspaceFolder}/andresfit-tracker/backend/venv",
+        "PATH": "${workspaceFolder}/andresfit-tracker/backend/venv/bin:${env:PATH}"
       }
     },
     {
       "name": "Launch Vite Frontend",
       "type": "node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/octofit-tracker/frontend",
+      "cwd": "${workspaceFolder}/andresfit-tracker/frontend",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run",

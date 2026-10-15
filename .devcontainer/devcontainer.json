@@ -1,5 +1,5 @@
 {
-    "name": "OctoFit Tracker Multi-tier Application Codespace",
+    "name": "AndresFit Tracker Multi-tier Application Codespace",
     "image": "mcr.microsoft.com/devcontainers/base:jammy",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
@@ -32,15 +32,15 @@
     ],
     "portsAttributes": {
         "5173": {
-            "label": "octofit-tracker-frontend",
+            "label": "andresfit-tracker-frontend",
             "requireLocalPort": true
         },
         "8000": {
-            "label": "octofit-tracker-api",
+            "label": "andresfit-tracker-api",
             "requireLocalPort": true
         },
         "27017": {
-            "label": "octofit-tracker-mongodb",
+            "label": "andresfit-tracker-mongodb",
             "requireLocalPort": true
         }
     }

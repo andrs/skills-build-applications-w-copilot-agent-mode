@@ -27,7 +27,7 @@ In this step, you will finalize API hosting for your **multi-tier application**:
 <details>
 <summary>Having trouble? 🤷</summary><br/>
 
-Verify `octofit-tracker/backend/src/server.ts` includes:
+Verify `andresfit-tracker/backend/src/server.ts` includes:
 
 - `CODESPACE_NAME`
 - `-8000.app.github.dev`

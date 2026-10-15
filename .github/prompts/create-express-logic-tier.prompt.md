@@ -1,16 +1,15 @@
 ---
 mode: 'agent'
-model: GPT-5.5
-description: 'Create the Node.js logic tier for the Octofit multi-tier application'
+description: 'Create the FastAPI logic tier for the AndresFit multi-tier application'
 ---
 
-Create the logic tier in `octofit-tracker/backend` for the Octofit Tracker multi-tier application.
+Create the logic tier in `andresfit-tracker/backend` for the AndresFit Tracker multi-tier application.
 
 Requirements:
 
 1. Do not change directories; use path-qualified commands.
-2. Initialize a TypeScript Node.js API with Express.
-3. Configure scripts for build/dev/start.
+2. Initialize a Python FastAPI application with SQLAlchemy and Pydantic.
+3. Configure a virtual environment and requirements.txt.
 4. Add route handlers for:
    - `/api/users/`
    - `/api/teams/`

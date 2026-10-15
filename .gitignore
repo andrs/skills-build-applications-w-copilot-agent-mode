@@ -2,6 +2,7 @@
 
 # Virtual Environment
 venv
+.venv
 
 # octofit tracker app
 # octfit-tracker
@@ -16,6 +17,7 @@ node_modules
 
 # production
 /build
+dist/
 
 # misc
 .DS_Store
@@ -31,6 +33,8 @@ yarn-error.log*
 # Python files
 *.pyc
 __pycache__/
+*.db
+.pytest_cache/
 
 # Local tool caches
 .impeccable/

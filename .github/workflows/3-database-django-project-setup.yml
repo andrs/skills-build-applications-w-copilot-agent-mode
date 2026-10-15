@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/src/config/database.ts
+          text-file: andresfit-tracker/backend/src/config/database.ts
           keyphrase: 'octofit_db'
           minimum-occurrences: 1
           case-sensitive: false
@@ -70,7 +70,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/src/config/database.ts
+          text-file: andresfit-tracker/backend/src/config/database.ts
           keyphrase: 'mongoose'
           minimum-occurrences: 1
           case-sensitive: false
@@ -80,7 +80,7 @@ jobs:
         continue-on-error: true
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
-          text-file: octofit-tracker/backend/src/scripts/seed.ts
+          text-file: andresfit-tracker/backend/src/scripts/seed.ts
           keyphrase: 'Seed the octofit_db database with test data'
           minimum-occurrences: 1
           case-sensitive: false
