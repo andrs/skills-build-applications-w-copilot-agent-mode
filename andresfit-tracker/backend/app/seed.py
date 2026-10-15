@@ -2,11 +2,16 @@
 
 from datetime import datetime, timedelta
 
-from app.database import Base, SessionLocal, engine
-from app.models import Activity, Team, User, Workout
+import app.models  # noqa: F401 — ensure all models are registered
+from app.database import SessionLocal, engine
+from app.models.base import Base
+from app.models.activity import Activity
+from app.models.team import Team
+from app.models.user import User
+from app.models.workout import Workout
 
 
-def seed():
+def seed() -> None:
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 
@@ -14,6 +19,8 @@ def seed():
         print("Database already seeded — skipping.")
         db.close()
         return
+
+    print("Seeding database with test data...")
 
     users = [
         User(username="paul_octo", email="paul@mergington.edu", full_name="Paul Octo"),
@@ -38,19 +45,19 @@ def seed():
     ]
     db.add_all(activities)
 
-    team_alpha = Team(name="Alpha Runners", description="Morning running crew", members=[users[0], users[2]])
-    team_beta = Team(name="Beta Lifters", description="Strength training squad", members=[users[1], users[4]])
-    team_gamma = Team(name="Gamma Walkers", description="Walking club", members=[users[3], users[0]])
-    db.add_all([team_alpha, team_beta, team_gamma])
+    db.add_all([
+        Team(name="Alpha Runners", description="Morning running crew", members=[users[0], users[2]]),
+        Team(name="Beta Lifters", description="Strength training squad", members=[users[1], users[4]]),
+        Team(name="Gamma Walkers", description="Walking club", members=[users[3], users[0]]),
+    ])
 
-    workouts = [
+    db.add_all([
         Workout(name="Morning Jog", description="Easy 30-min jog", activity_type="running", duration_minutes=30, difficulty="beginner"),
         Workout(name="Interval Sprints", description="High-intensity intervals", activity_type="running", duration_minutes=25, difficulty="advanced"),
         Workout(name="Power Walk", description="Brisk walking session", activity_type="walking", duration_minutes=45, difficulty="beginner"),
         Workout(name="Full Body Strength", description="Compound lifts", activity_type="strength", duration_minutes=60, difficulty="intermediate"),
         Workout(name="Advanced Deadlifts", description="Heavy deadlift program", activity_type="strength", duration_minutes=50, difficulty="advanced"),
-    ]
-    db.add_all(workouts)
+    ])
 
     db.commit()
     db.close()
