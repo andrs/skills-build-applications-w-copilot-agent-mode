@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: 'Scaffold a production-ready FastAPI microservice with strict layered architecture (API / Service / Repository / Model)'
 ---
 
@@ -208,7 +208,7 @@ Before reporting done, verify:
 
 - [ ] Every router endpoint calls ONLY the service layer
 - [ ] Service layer raises ONLY typed exceptions from `services/exceptions.py`
-- [ ] Repository methods return `None` for not-found instead of raising
+- [ ] Repository methods return `None` for not-found, which the service maps to a `404 Not Found` HTTP status code
 - [ ] All exception types are mapped in `exception_handlers.py`
 - [ ] All endpoints have `response_model`, `status_code`, `summary`
 - [ ] All service methods accept Pydantic schemas, return Pydantic schemas
