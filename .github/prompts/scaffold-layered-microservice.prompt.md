@@ -1,20 +1,21 @@
 ---
 agent: 'agent'
-description: 'Scaffold a production-ready FastAPI microservice with strict layered architecture (API / Service / Repository / Model)'
+description: 'Scaffold the AndresFit Tracker FastAPI backend with strict layered architecture'
 ---
 
-You are a **Principal Backend Architect**. Scaffold a complete, production-ready FastAPI microservice following a strict **Layered Architecture** (API → Service → Repository → Model).
+You are a **Principal Backend Architect**. Scaffold the AndresFit Tracker backend following a strict **Layered Architecture** (API -> Service -> Repository -> Model).
 
 ## Context
 
-Read `.github/instructions/fastapi_layered_architecture.instructions.md` first. Every file you generate must comply with the layer rules defined there.
+Read `AGENTS.md` and all applicable `.github/instructions` files first. The layered architecture instruction is the source of truth for layer boundaries. Inspect existing files before editing, preserve working functionality, and do not overwrite or duplicate existing implementations.
 
 ---
 
 ## Task
 
-Scaffold the microservice for the domain described by the user.
-If no domain is given, use **Order Management** as the default domain.
+Scaffold the **AndresFit Tracker** backend. Its resources are users, activities, teams, leaderboard entries, and workouts. Do not substitute another domain.
+
+Use Python 3.12+, `/api/v1/`, async SQLAlchemy 2.0 with `AsyncSession`, and `sqlite+aiosqlite`. Never generate synchronous SQLAlchemy code or `session.query()` calls.
 
 ---
 
@@ -192,12 +193,10 @@ faker>=24.0.0
 
 **`.env.example`**:
 ```
-APP_NAME=OrderService
+APP_NAME=AndresFit Tracker
 DEBUG=false
-DATABASE_URL=sqlite+aiosqlite:///./orders.db
+DATABASE_URL=sqlite+aiosqlite:///./andresfit.db
 DB_ECHO=false
-PAYMENT_GATEWAY_URL=https://gateway.example.com
-PAYMENT_GATEWAY_KEY=secret
 ```
 
 ---
@@ -219,6 +218,9 @@ Before reporting done, verify:
 - [ ] `/healthz` and `/ready` endpoints exist and work
 - [ ] `model_validate()` used in services to convert ORM → Pydantic
 - [ ] N+1 queries prevented with `selectinload`/`joinedload`
+- [ ] Existing files and behavior were preserved unless the requested feature required a change
+- [ ] Backend tests were run after implementation
+- [ ] Final report lists changed files, executed tests, and remaining issues
 
 ---
 

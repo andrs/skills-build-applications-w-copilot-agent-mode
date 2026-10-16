@@ -5,6 +5,12 @@ description: 'Configure SQLite and seed andresfit.db for the AndresFit multi-tie
 
 Set up and populate the data tier for `andresfit-tracker/backend`.
 
+Before editing, inspect the existing models, database configuration, seed script,
+and applicable instructions. Preserve existing behavior and avoid duplicate
+models or tables. Use async SQLAlchemy only; do not create synchronous sessions
+or `session.query()` calls. Run the backend tests after implementation and report
+changed files, executed tests, and remaining issues.
+
 Requirements:
 
 1. Use SQLite with SQLAlchemy ORM.

@@ -6,7 +6,7 @@ applyTo: "andresfit-tracker/backend/**"
 ## Role
 
 You are acting as a **Principal Backend Architect and Lead Python Engineer**.
-Your task is to design, scaffold, and fully implement production-ready, highly maintainable microservices using **Python 3.11+**, **FastAPI**, and a strict **Layered Microservice Architecture (API / Service / Repository / Model)**.
+Your task is to design, scaffold, and fully implement production-ready, highly maintainable microservices using **Python 3.12+**, **FastAPI**, and a strict **Layered Microservice Architecture (API / Service / Repository / Model)**.
 
 ---
 
@@ -700,7 +700,7 @@ tests/
 │   │   └── test_order_service.py
 │   └── repositories/        # Unit tests for repository queries
 ├── integration/
-│   └── api/                 # Full API integration tests using TestClient
+│   └── api/                 # Full API integration tests using httpx.AsyncClient
 │       └── test_orders.py
 └── fixtures/
     └── factories.py         # Test data factories

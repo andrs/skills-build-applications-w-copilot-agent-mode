@@ -71,12 +71,12 @@ andresfit-tracker/
 
 ### Logic tier
 
-- Python 3.11+
+- Python 3.12+
 - FastAPI
 - Uvicorn (ASGI server)
-- Pydantic for request/response validation
+- Pydantic v2 for request/response validation
 
 ### Data tier
 
 - SQLite (file-based, zero configuration)
-- SQLAlchemy ORM for data access
+- Async SQLAlchemy 2.0 ORM with `sqlite+aiosqlite`

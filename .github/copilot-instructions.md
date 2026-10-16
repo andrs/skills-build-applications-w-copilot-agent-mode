@@ -16,9 +16,9 @@ It allows students to log workouts, compete on a leaderboard, join teams, and re
 |------|-----------|
 | Presentation | React 19 + Vite + react-router-dom + Bootstrap |
 | Logic / API | Python >= 3.12 · FastAPI · Uvicorn |
-| Data | SQLite · SQLAlchemy 2.0 ORM (async-ready) |
+| Data | SQLite · Async SQLAlchemy 2.0 ORM with `sqlite+aiosqlite` |
 | Validation | Pydantic v2 |
-| Testing (backend) | pytest · httpx · TestClient |
+| Testing (backend) | pytest · pytest-asyncio · httpx.AsyncClient |
 | Testing (frontend) | vitest |
 
 ### Ports
@@ -81,7 +81,7 @@ HTTP Request
 
 ### Routers (`src/api/v1/routers/`)
 
-- Prefix all routes: `/api/` (current) or `/api/v1/` (new features)
+- Prefix all resource routes with `/api/v1/`
 - Always declare `response_model` and `status_code` on every endpoint
 - Use `status.HTTP_*` constants — never bare integers like `404`
 - Inject services with `Depends()` — never instantiate them directly
@@ -97,13 +97,11 @@ async def create_user(
 ) -> UserRead:
     return await service.create_user(payload)
 
-# WRONG — never do this
+# WRONG — never do this: routers must not access the database directly
 @router.post("/users/")
-def create_user(payload: UserCreate, db: Session = Depends(get_db)):
-    user = User(**payload.dict())
-    db.add(user)
-    db.commit()
-    return user
+async def create_user(payload: UserCreate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User))
+    return result.scalars().all()
 ```
 
 ### Services (`src/services/`)
@@ -218,12 +216,12 @@ class PaginatedResponse(BaseModel, Generic[T]):
     pages: int
 
 @router.get("/", response_model=PaginatedResponse[UserRead])
-def list_users(
+async def list_users(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=100),
-    db: Session = Depends(get_db),
-):
-    ...
+    service: UserService = Depends(get_user_service),
+) -> PaginatedResponse[UserRead]:
+    return await service.list_users(page=page, size=size)
 ```
 
 ### Structured Error
@@ -248,7 +246,7 @@ raise HTTPException(
 ### Backend Tests (`tests/`)
 
 - **Unit tests**: mock repositories with `AsyncMock`, test service logic in isolation
-- **Integration tests**: use `TestClient` or `AsyncClient` with a real in-memory SQLite DB
+- **Integration tests**: use `httpx.AsyncClient` with `ASGITransport` and a real in-memory async SQLite DB
 - Use `pytest.mark.parametrize` for validation scenarios
 - Each endpoint needs tests for: success, not-found (404), duplicate (400/409), invalid input (422)
 
@@ -270,8 +268,8 @@ async def test_create_user_raises_on_duplicate(service, mock_repo):
     ("x" * 51, 422),    # too long
     ("has space", 422), # invalid chars
 ])
-def test_create_user_username_validation(client, username, expected):
-    r = client.post("/api/users/", json={"username": username, ...})
+async def test_create_user_username_validation(client, username, expected):
+    r = await client.post("/api/v1/users/", json={"username": username, ...})
     assert r.status_code == expected
 ```
 
@@ -335,9 +333,9 @@ async function request(path, options = {}) {
 ```python
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
-    database_url: str = "sqlite:///./andresfit.db"
+    database_url: str = "sqlite+aiosqlite:///./andresfit.db"
     debug: bool = False
-    api_prefix: str = "/api"
+    api_prefix: str = "/api/v1"
 
 settings = Settings()
 ```
@@ -374,7 +372,7 @@ settings = Settings()
 | Component | Convention | Example |
 |-----------|-----------|---------|
 | Router file | `{resource}.py` | `users.py` |
-| URL prefix | `/{resources}` | `/users` |
+| URL prefix | `/api/v1/{resources}` | `/api/v1/users` |
 | Service class | `{Resource}Service` | `UserService` |
 | Repository class | `{Resource}Repository` | `UserRepository` |
 | ORM model | `{Resource}` (PascalCase) | `User`, `Activity` |
@@ -399,11 +397,11 @@ Workout               (standalone suggestions)
 
 | Resource | Endpoint | Operations |
 |----------|---------|-----------|
-| Users | `/api/users/` | CRUD |
-| Activities | `/api/activities/` | CRUD, filter by type/user |
-| Teams | `/api/teams/` | CRUD, manage members |
-| Leaderboard | `/api/leaderboard/` | Read (sorted by calories) |
-| Workouts | `/api/workouts/` | CRUD, filter by difficulty/type |
+| Users | `/api/v1/users/` | CRUD |
+| Activities | `/api/v1/activities/` | CRUD, filter by type/user |
+| Teams | `/api/v1/teams/` | CRUD, manage members |
+| Leaderboard | `/api/v1/leaderboard/` | Read (sorted by calories) |
+| Workouts | `/api/v1/workouts/` | CRUD, filter by difficulty/type |
 
 ### Activity Types
 `running` · `walking` · `strength`

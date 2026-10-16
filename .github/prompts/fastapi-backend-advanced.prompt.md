@@ -12,6 +12,14 @@ layered architecture and async best practices.
 - `.github/instructions/fastapi_backend_enhanced.instructions.md` — async cross-cutting patterns
 - `AGENTS.md` — real structure, run and test commands
 
+## Required workflow
+
+1. Inspect the existing backend files before editing.
+2. Preserve existing functionality and avoid overwriting or duplicating working code.
+3. Keep all database access async; never generate synchronous `Session` or `session.query()` code.
+4. Run the backend test suite after implementation.
+5. Report changed files, tests executed, and any remaining issues.
+
 Everything below is **async** (`AsyncSession`, `select()`), uses **SQLite async**
 (`sqlite+aiosqlite`), and uses the real **`src/`** layout. Never use `app/`,
 `session.query()`, or synchronous `Session`.
