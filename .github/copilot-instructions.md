@@ -15,7 +15,7 @@ It allows students to log workouts, compete on a leaderboard, join teams, and re
 | Tier | Technology |
 |------|-----------|
 | Presentation | React 19 + Vite + react-router-dom + Bootstrap |
-| Logic / API | Python 3.11+ · FastAPI · Uvicorn |
+| Logic / API | Python >= 3.12 · FastAPI · Uvicorn |
 | Data | SQLite · SQLAlchemy 2.0 ORM (async-ready) |
 | Validation | Pydantic v2 |
 | Testing (backend) | pytest · httpx · TestClient |
@@ -42,25 +42,25 @@ HTTP Request
      │
      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  API Layer     andresfit-tracker/backend/app/routers/   │
+│  API Layer     andresfit-tracker/backend/src/api/v1/routers/ │
 │  FastAPI routers — HTTP only, no business logic        │
 └──────────────────────────┬──────────────────────────────┘
                            │  Depends()
                            ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Service Layer  andresfit-tracker/backend/app/services/ │
+│  Service Layer  andresfit-tracker/backend/src/services/ │
 │  Business rules, lifecycle flows, custom exceptions    │
 └──────────────────────────┬──────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Repository Layer  .../backend/app/repositories/        │
+│  Repository Layer  .../backend/src/repositories/        │
 │  SQLAlchemy queries only — return None on not-found    │
 └──────────────────────────┬──────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Model Layer   andresfit-tracker/backend/app/models/    │
+│  Model Layer   andresfit-tracker/backend/src/models/    │
 │  SQLAlchemy ORM models with TimestampMixin             │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -70,7 +70,7 @@ HTTP Request
 | Layer | Can import | Cannot import |
 |-------|-----------|---------------|
 | **Routers** | schemas, services, `Depends` | models, repositories, SQLAlchemy |
-| **Services** | schemas, repositories, clients, exceptions | FastAPI, `Request`, SQLAlchemy models |
+| **Services** | schemas, repositories, exceptions | FastAPI, `Request`, SQLAlchemy models |
 | **Repositories** | models, SQLAlchemy | schemas, services, FastAPI |
 | **Models** | SQLAlchemy | Pydantic, FastAPI |
 | **Schemas** | Pydantic | SQLAlchemy, FastAPI |
@@ -79,14 +79,14 @@ HTTP Request
 
 ## Backend Rules
 
-### Routers (`app/routers/`)
+### Routers (`src/api/v1/routers/`)
 
 - Prefix all routes: `/api/` (current) or `/api/v1/` (new features)
 - Always declare `response_model` and `status_code` on every endpoint
 - Use `status.HTTP_*` constants — never bare integers like `404`
 - Inject services with `Depends()` — never instantiate them directly
 - Map service exceptions to HTTP codes via `HTTPException` or exception handlers
-- Include `/health` endpoint in every router module
+- Include `/healthz` endpoint in every router module
 
 ```python
 # CORRECT
@@ -106,7 +106,7 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)):
     return user
 ```
 
-### Services (`app/services/`)
+### Services (`src/services/`)
 
 - Accept Pydantic schemas as input
 - Return Pydantic schemas as output (use `model_validate()` to convert ORM → schema)
@@ -114,7 +114,7 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)):
 - All methods must be `async def`
 
 ```python
-# Custom exceptions always live in app/services/exceptions.py
+# Custom exceptions always live in src/services/exceptions.py
 class NotFoundError(ServiceError):
     def __init__(self, resource: str, id: int):
         self.resource = resource
@@ -129,7 +129,7 @@ class InvalidOperationError(ServiceError):
     """Raised when a business rule is violated."""
 ```
 
-### Repositories (`app/repositories/`)
+### Repositories (`src/repositories/`)
 
 - Use SQLAlchemy 2.0 style: `select()`, `update()`, `delete()` — never `session.query()`
 - Return `None` for not-found — never raise exceptions
@@ -145,7 +145,7 @@ return result.scalar_one_or_none()
 return session.query(User).filter(User.id == user_id).first()
 ```
 
-### Models (`app/models/`)
+### Models (`src/models/`)
 
 - Use `Mapped[]` and `mapped_column()` — SQLAlchemy 2.0 typed ORM
 - Every model must include `TimestampMixin` (provides `created_at`, `updated_at`)
@@ -163,7 +163,7 @@ class User(Base, TimestampMixin):
     )
 ```
 
-### Schemas (`app/schemas/`)
+### Schemas (`src/schemas/`)
 
 - Always define three schema variants: `{Resource}Create`, `{Resource}Read`, `{Resource}Update`
 - `Read` schemas: add `model_config = ConfigDict(from_attributes=True)`
@@ -247,7 +247,7 @@ raise HTTPException(
 
 ### Backend Tests (`tests/`)
 
-- **Unit tests**: mock repositories/clients with `AsyncMock`, test service logic in isolation
+- **Unit tests**: mock repositories with `AsyncMock`, test service logic in isolation
 - **Integration tests**: use `TestClient` or `AsyncClient` with a real in-memory SQLite DB
 - Use `pytest.mark.parametrize` for validation scenarios
 - Each endpoint needs tests for: success, not-found (404), duplicate (400/409), invalid input (422)
@@ -421,10 +421,10 @@ python3 -m venv andresfit-tracker/backend/.venv
 andresfit-tracker/backend/.venv/bin/pip install -r andresfit-tracker/backend/requirements.txt
 
 # Backend — seed database
-cd andresfit-tracker/backend && .venv/bin/python -m app.seed
+cd andresfit-tracker/backend && .venv/bin/python -m src.seed
 
 # Backend — start server
-cd andresfit-tracker/backend && .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+cd andresfit-tracker/backend && .venv/bin/uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 # Backend — run tests
 cd andresfit-tracker/backend && .venv/bin/python -m pytest tests/ -v
@@ -447,21 +447,35 @@ Every service must expose:
 
 | Endpoint | Type | Purpose |
 |----------|------|---------|
-| `GET /health` | Liveness | Is the process alive? |
+| `GET /healthz` | Liveness | Is the process alive? |
 | `GET /ready` | Readiness | Is the DB connection healthy? |
 
 ```python
-@router.get("/health")
-async def health():
-    return {"status": "ok", "service": "andresfit-tracker-api"}
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-@router.get("/ready")
-async def ready(db: Session = Depends(get_db)):
+from src.database import get_db
+
+router = APIRouter(tags=["health"])
+
+
+@router.get("/healthz", summary="Liveness probe")
+async def liveness():
+    return {"status": "alive"}
+
+
+@router.get("/ready", summary="Readiness probe")
+async def readiness(db: AsyncSession = Depends(get_db)):
     try:
-        db.execute(text("SELECT 1"))
+        await db.execute(text("SELECT 1"))
         return {"status": "ready", "database": "ok"}
-    except Exception as e:
-        raise HTTPException(status_code=503, detail={"status": "not_ready", "database": str(e)})
+    except Exception as exc:  # noqa: BLE001
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"status": "not_ready", "database": str(exc)},
+        )
 ```
 
 ---

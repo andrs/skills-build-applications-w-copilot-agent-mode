@@ -174,7 +174,7 @@ Follow exactly the patterns in the instructions:
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
 sqlalchemy>=2.0.0
-asyncpg>=0.29.0
+aiosqlite>=0.20.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
 pydantic[email]>=2.0.0
@@ -194,7 +194,7 @@ faker>=24.0.0
 ```
 APP_NAME=OrderService
 DEBUG=false
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/orders
+DATABASE_URL=sqlite+aiosqlite:///./orders.db
 DB_ECHO=false
 PAYMENT_GATEWAY_URL=https://gateway.example.com
 PAYMENT_GATEWAY_KEY=secret

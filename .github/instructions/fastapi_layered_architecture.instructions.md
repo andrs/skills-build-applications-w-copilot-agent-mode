@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: "andresfit-tracker/backend/**"
 ---
 # FastAPI Layered Microservice Architecture — Copilot Instructions
 
@@ -638,7 +638,7 @@ class Settings(BaseSettings):
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
 
-    database_url: str = "postgresql+asyncpg://user:pass@localhost:5432/orders"
+    database_url: str = "sqlite+aiosqlite:///./andresfit.db"
     db_echo: bool = False
 
     payment_gateway_url: str
