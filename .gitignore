@@ -3,6 +3,9 @@
 # Virtual Environment
 venv
 .venv
+.idea
+.idea/
+/.idea/
 
 # octofit tracker app
 # octfit-tracker
