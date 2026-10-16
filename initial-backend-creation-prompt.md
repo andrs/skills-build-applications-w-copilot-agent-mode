@@ -337,14 +337,15 @@ httpx>=0.27.0
 python -m venv andresfit-tracker/backend/.venv
 andresfit-tracker/backend/.venv/Scripts/python.exe -m pip install -r andresfit-tracker/backend/requirements.txt
 
-# Seed database
+# Seed database from the repository root
+$env:PYTHONPATH = "andresfit-tracker/backend"
 andresfit-tracker/backend/.venv/Scripts/python.exe -m src.seed
 
-# Start server
-andresfit-tracker/backend/.venv/Scripts/uvicorn.exe src.main:app --reload --host 0.0.0.0 --port 8000
+# Start server from the repository root
+andresfit-tracker/backend/.venv/Scripts/uvicorn.exe src.main:app --app-dir andresfit-tracker/backend --reload --host 0.0.0.0 --port 8000
 
-# Run tests
-andresfit-tracker/backend/.venv/Scripts/python.exe -m pytest tests -v
+# Run tests from the repository root
+andresfit-tracker/backend/.venv/Scripts/python.exe -m pytest --rootdir=andresfit-tracker/backend andresfit-tracker/backend/tests -v
 ```
 
 > Never change directories in commands; reference target paths directly.
@@ -361,7 +362,7 @@ andresfit-tracker/backend/.venv/Scripts/python.exe -m pytest tests -v
 5. Repositories use SQLAlchemy 2.0 `select()` with eager loading; return `None` on not-found.
 6. `/api/v1/` prefix, plus `/healthz` and `/ready` health probes.
 7. Config fully env-driven via `pydantic-settings`; nothing hardcoded.
-8. All 26 tests (integration + unit) pass with the in-memory async SQLite DB.
+8. All listed integration and unit tests pass with the in-memory async SQLite DB.
 
 **Generate every file following these specifications, ensuring clean separation
 across the presentation (routers), business (services), data-access (repositories),
